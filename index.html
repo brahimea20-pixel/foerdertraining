@@ -180,9 +180,15 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxjHFoisWCekbiiNR8m09gC
 // ==========================================================
 
 async function storageGet(key){
-  const res = await fetch(API_URL + "?key=" + encodeURIComponent(key));
-  const data = await res.json();
-  return (data && data.value !== null && data.value !== "") ? { value: data.value } : null;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  try{
+    const res = await fetch(API_URL + "?key=" + encodeURIComponent(key), { signal: controller.signal });
+    const data = await res.json();
+    return (data && data.value !== null && data.value !== "") ? { value: data.value } : null;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function storageSet(key, value){
@@ -244,15 +250,19 @@ async function loadAll(){
   const trainingDate = nextTrainingDate(config.weekday, config.time);
   const dateKey = isoDateKey(trainingDate);
   let entries = [];
-  try{
-    const res = await storageGet("foerdertraining:signups:" + dateKey);
-    if(res && res.value) entries = JSON.parse(res.value);
-  }catch(e){ entries = []; }
   let cancelled = false;
-  try{
-    const res = await storageGet("foerdertraining:cancelled:" + dateKey);
-    if(res && res.value) cancelled = JSON.parse(res.value) === true;
-  }catch(e){ cancelled = false; }
+
+  const [signupsResult, cancelledResult] = await Promise.allSettled([
+    storageGet("foerdertraining:signups:" + dateKey),
+    storageGet("foerdertraining:cancelled:" + dateKey)
+  ]);
+
+  if(signupsResult.status === "fulfilled" && signupsResult.value && signupsResult.value.value){
+    try{ entries = JSON.parse(signupsResult.value.value); }catch(e){ entries = []; }
+  }
+  if(cancelledResult.status === "fulfilled" && cancelledResult.value && cancelledResult.value.value){
+    try{ cancelled = JSON.parse(cancelledResult.value.value) === true; }catch(e){ cancelled = false; }
+  }
 
   state.config = config;
   state.trainingDate = trainingDate;
