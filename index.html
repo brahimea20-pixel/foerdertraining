@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fördertraining Anmeldung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pitch:#20492F;
+    --pitch-light:#2F6B44;
+    --chalk:#F6F8F4;
+    --card:#FFFFFF;
+    --ink:#152316;
+    --ink-soft:#4B5E4E;
+    --amber:#D98E2B;
+    --amber-soft:#F3D9AE;
+    --line:#DCE6DD;
+    --danger:#B3432E;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--chalk);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:0 20px 60px;}
+  header.hero{
+    background:radial-gradient(1200px 400px at 50% -120px, var(--pitch-light), var(--pitch) 60%);
+    color:#fff;
+    padding:36px 20px 46px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 48px);
+    pointer-events:none;
+  }
+  .hero-inner{max-width:680px;margin:0 auto;position:relative;z-index:1;}
+  .eyebrow{
+    font:600 12px/1 'Inter';
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber-soft);
+    margin:0 0 8px;
+  }
+  h1{
+    font:700 34px/1.05 'Oswald';
+    letter-spacing:.01em;
+    margin:0 0 10px;
+    text-transform:uppercase;
+  }
+  .hero-meta{font:500 15px/1.5 'Inter'; color:#DCEBE0; margin:0;}
+  .hero-meta b{color:#fff;}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+    margin-top:-28px;
+    box-shadow:0 10px 30px -18px rgba(21,35,22,0.35);
+    position:relative;
+    z-index:2;
+  }
+  .card + .card{margin-top:22px;}
+
+  .cancel-banner{
+    background:#FBEAE5;
+    border:1px solid #E6BEB0;
+    color:var(--danger);
+    border-radius:10px;
+    padding:12px 14px;
+    font:600 14px/1.4 'Inter';
+    margin-bottom:16px;
+  }
+
+  .section-title{
+    font:600 12px/1 'Inter';
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 14px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+
+  .capacity-row{display:flex; align-items:baseline; gap:10px; margin-bottom:10px;}
+  .capacity-row .num{font:700 26px/1 'Oswald'; color:var(--pitch);}
+  .capacity-row .of{font:500 14px 'Inter'; color:var(--ink-soft);}
+  .bar{height:8px; border-radius:6px; background:var(--line); overflow:hidden; margin-bottom:4px;}
+  .bar-fill{height:100%; background:var(--pitch); border-radius:6px; transition:width .3s ease;}
+  .bar-fill.full{background:var(--amber);}
+  .capacity-note{font:500 13px 'Inter'; color:var(--ink-soft); margin:0;}
+
+  .lineup{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;}
+  .jersey{
+    width:44px; height:44px; border-radius:50%;
+    background:var(--pitch);
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font:700 15px 'Oswald';
+    flex-shrink:0;
+    position:relative;
+  }
+  .jersey.bench{background:var(--amber);}
+  .roster-row{
+    display:flex; align-items:center; gap:12px;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .roster-row:last-child{border-bottom:none;}
+  .roster-name{font:600 14px 'Inter'; flex:1;}
+  .roster-sub{font:400 12px 'Inter'; color:var(--ink-soft);}
+  .roster-empty{color:var(--ink-soft); font:500 13px 'Inter'; padding:6px 0;}
+  .del-btn{
+    border:none; background:none; color:var(--danger);
+    font:600 12px 'Inter'; cursor:pointer; padding:6px 8px;
+  }
+
+  label{display:block; font:600 13px 'Inter'; margin:14px 0 6px; color:var(--ink);}
+  input, select{
+    width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:10px;
+    font:500 14px 'Inter'; background:#fff; color:var(--ink);
+  }
+  input:focus, select:focus{outline:2px solid var(--pitch-light); outline-offset:1px;}
+
+  button.primary{
+    width:100%; margin-top:18px; padding:13px 16px; border:none; border-radius:10px;
+    background:var(--pitch); color:#fff; font:600 14px 'Inter'; letter-spacing:.02em;
+    cursor:pointer;
+  }
+  button.primary:hover{background:var(--pitch-light);}
+  button.primary:disabled{background:var(--line); color:var(--ink-soft); cursor:not-allowed;}
+  button.ghost{
+    width:100%; margin-top:10px; padding:11px 16px; border:1px solid var(--line); border-radius:10px;
+    background:transparent; color:var(--ink-soft); font:600 13px 'Inter'; cursor:pointer;
+  }
+
+  .confirm{
+    background:#EAF3EC; border:1px solid #C7DECB; border-radius:10px; padding:14px;
+    font:500 14px/1.5 'Inter'; color:var(--pitch); margin-top:16px;
+  }
+  .confirm b{display:block; font:700 16px 'Oswald'; margin-bottom:2px; text-transform:uppercase;}
+
+  .trainer-toggle{
+    text-align:center; margin:26px 0 0;
+  }
+  .trainer-toggle button{
+    background:none; border:none; color:var(--ink-soft); font:500 12px 'Inter';
+    text-decoration:underline; cursor:pointer;
+  }
+
+  .pin-row{display:flex; gap:8px; margin-top:14px;}
+  .pin-row input{flex:1;}
+  .pin-row button{width:auto; margin-top:0; padding:11px 18px;}
+
+  .config-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 14px;}
+  .badge{
+    font:600 11px 'Inter'; text-transform:uppercase; letter-spacing:.06em;
+    padding:3px 8px; border-radius:100px; background:var(--amber-soft); color:#7A4E14;
+  }
+  .foot-note{font:400 12px/1.5 'Inter'; color:var(--ink-soft); text-align:center; margin-top:22px;}
+  .error-msg{color:var(--danger); font:500 13px 'Inter'; margin-top:8px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ==========================================================
+// HIER DEINE GOOGLE APPS SCRIPT WEB-APP-URL EINFÜGEN:
+const API_URL = "https://script.google.com/macros/s/AKfycbxjHFoisWCekbiiNR8m09gCqeZw9la9SOV1iWvVLwa8v6ED4JBoYQapmjRKUjiFlGcW/exec";
+// ==========================================================
+
+async function storageGet(key){
+  const res = await fetch(API_URL + "?key=" + encodeURIComponent(key));
+  const data = await res.json();
+  return (data && data.value !== null && data.value !== "") ? { value: data.value } : null;
+}
+
+async function storageSet(key, value){
+  await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ key: key, value: value, action: "set" })
+  });
+  return { value: value };
+}
+
+const STORAGE_CONFIG_KEY = "foerdertraining:config";
+const DEFAULT_CONFIG = { weekday: 2, time: "16:00", capacity: 12, pin: "0000" };
+const WEEKDAYS = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+
+let state = {
+  loading: true,
+  config: null,
+  trainingDate: null,
+  dateKey: null,
+  entries: [],
+  cancelled: false,
+  trainerMode: false,
+  pinInput: "",
+  pinError: "",
+  justSignedUp: null,
+  formError: ""
+};
+
+function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstElementChild; }
+
+function nextTrainingDate(weekday, timeStr){
+  const now = new Date();
+  const [h,m] = timeStr.split(':').map(Number);
+  const d = new Date(now);
+  let diff = (weekday - now.getDay() + 7) % 7;
+  d.setDate(now.getDate() + diff);
+  d.setHours(h, m, 0, 0);
+  if(diff === 0 && d < now){ d.setDate(d.getDate() + 7); }
+  return d;
+}
+
+function isoDateKey(d){
+  return d.toISOString().slice(0,10);
+}
+
+function formatDateLong(d){
+  return d.toLocaleDateString('de-DE', { weekday:'long', day:'numeric', month:'long' });
+}
+
+async function loadAll(){
+  let config = DEFAULT_CONFIG;
+  try{
+    const res = await storageGet(STORAGE_CONFIG_KEY);
+    if(res && res.value) config = JSON.parse(res.value);
+  }catch(e){
+    try{ await storageSet(STORAGE_CONFIG_KEY, JSON.stringify(DEFAULT_CONFIG)); }catch(e2){}
+  }
+  const trainingDate = nextTrainingDate(config.weekday, config.time);
+  const dateKey = isoDateKey(trainingDate);
+  let entries = [];
+  try{
+    const res = await storageGet("foerdertraining:signups:" + dateKey);
+    if(res && res.value) entries = JSON.parse(res.value);
+  }catch(e){ entries = []; }
+  let cancelled = false;
+  try{
+    const res = await storageGet("foerdertraining:cancelled:" + dateKey);
+    if(res && res.value) cancelled = JSON.parse(res.value) === true;
+  }catch(e){ cancelled = false; }
+
+  state.config = config;
+  state.trainingDate = trainingDate;
+  state.dateKey = dateKey;
+  state.entries = entries;
+  state.cancelled = cancelled;
+  state.loading = false;
+  render();
+}
+
+async function saveEntries(){
+  try{
+    await storageSet("foerdertraining:signups:" + state.dateKey, JSON.stringify(state.entries));
+  }catch(e){ console.error("Speichern fehlgeschlagen", e); }
+}
+
+async function saveConfig(){
+  try{
+    await storageSet(STORAGE_CONFIG_KEY, JSON.stringify(state.config));
+  }catch(e){ console.error("Speichern fehlgeschlagen", e); }
+}
+
+async function saveCancelled(){
+  try{
+    await storageSet("foerdertraining:cancelled:" + state.dateKey, JSON.stringify(state.cancelled));
+  }catch(e){ console.error("Speichern fehlgeschlagen", e); }
+}
+
+function initials(name){
+  return name.trim().split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase() || "?";
+}
+
+async function handleSignup(kind, eltern, kontakt){
+  state.formError = "";
+  if(!kind.trim() || !eltern.trim() || !kontakt.trim()){
+    state.formError = "Bitte alle Felder ausfüllen.";
+    render();
+    return;
+  }
+  const entry = { id: Date.now() + "-" + Math.random().toString(36).slice(2,7), kind: kind.trim(), eltern: eltern.trim(), kontakt: kontakt.trim(), ts: Date.now() };
+  state.entries.push(entry);
+  await saveEntries();
+  state.justSignedUp = entry;
+  render();
+}
+
+async function handleDelete(id){
+  state.entries = state.entries.filter(e => e.id !== id);
+  await saveEntries();
+  render();
+}
+
+async function handleToggleCancelled(){
+  state.cancelled = !state.cancelled;
+  await saveCancelled();
+  render();
+}
+
+async function handleSaveConfig(newConfig){
+  state.config = newConfig;
+  await saveConfig();
+  const trainingDate = nextTrainingDate(state.config.weekday, state.config.time);
+  const dateKey = isoDateKey(trainingDate);
+  if(dateKey !== state.dateKey){
+    state.trainingDate = trainingDate;
+    state.dateKey = dateKey;
+    try{
+      const res = await storageGet("foerdertraining:signups:" + dateKey);
+      state.entries = (res && res.value) ? JSON.parse(res.value) : [];
+    }catch(e){ state.entries = []; }
+    try{
+      const res = await storageGet("foerdertraining:cancelled:" + dateKey);
+      state.cancelled = (res && res.value) ? JSON.parse(res.value) === true : false;
+    }catch(e){ state.cancelled = false; }
+  }
+  render();
+}
+
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = "";
+
+  if(state.loading){
+    app.appendChild(el(`<div style="padding:60px 20px; text-align:center; font:500 14px 'Inter'; color:var(--ink-soft);">Lädt …</div>`));
+    return;
+  }
+
+  const cap = state.config.capacity;
+  const confirmed = state.entries.slice(0, cap);
+  const waitlist = state.entries.slice(cap);
+  const spotsLeft = Math.max(0, cap - confirmed.length);
+  const pct = Math.min(100, Math.round((confirmed.length / cap) * 100));
+
+  const wrap = el(`<div></div>`);
+
+  // Hero
+  const hero = el(`
+    <header class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">Fördertraining</p>
+        <h1>Anmeldung</h1>
+        <p class="hero-meta">Nächster Termin: <b>${formatDateLong(state.trainingDate)}</b>, ${state.config.time} Uhr</p>
+      </div>
+    </header>
+  `);
+  wrap.appendChild(hero);
+
+  const container = el(`<div class="wrap"></div>`);
+
+  // Signup card
+  const signupCard = el(`<div class="card"></div>`);
+
+  if(state.cancelled){
+    signupCard.appendChild(el(`<div class="cancel-banner">Das Training am ${formatDateLong(state.trainingDate)} fällt diese Woche aus.</div>`));
+  }
+
+  const capBlock = el(`
+    <div>
+      <p class="section-title">Plätze</p>
+      <div class="capacity-row"><span class="num">${confirmed.length}</span><span class="of">von ${cap} Plätzen belegt</span></div>
+      <div class="bar"><div class="bar-fill ${spotsLeft===0?'full':''}" style="width:${pct}%"></div></div>
+      <p class="capacity-note">${spotsLeft > 0 ? spotsLeft + " Platz" + (spotsLeft===1?"":"e") + " frei" : "Ausgebucht — Anmeldung geht auf die Warteliste"}</p>
+    </div>
+  `);
+  signupCard.appendChild(capBlock);
+
+  if(!state.justSignedUp){
+    const form = el(`
+      <form id="signup-form" autocomplete="off">
+        <label for="f-kind">Name des Kindes</label>
+        <input id="f-kind" type="text" placeholder="z. B. Lina Meyer" required>
+        <label for="f-eltern">Name Elternteil</label>
+        <input id="f-eltern" type="text" placeholder="z. B. Frau Meyer" required>
+        <label for="f-kontakt">Kontakt (Telefon oder E-Mail)</label>
+        <input id="f-kontakt" type="text" placeholder="z. B. 0151 2345678" required>
+        <div class="error-msg" style="${state.formError ? '' : 'display:none;'}">${state.formError}</div>
+        <button type="submit" class="primary">Anmelden</button>
+      </form>
+    `);
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const kind = form.querySelector('#f-kind').value;
+      const eltern = form.querySelector('#f-eltern').value;
+      const kontakt = form.querySelector('#f-kontakt').value;
+      handleSignup(kind, eltern, kontakt);
+    });
+    signupCard.appendChild(form);
+  } else {
+    const spot = state.entries.findIndex(e => e.id === state.justSignedUp.id);
+    const onWaitlist = spot >= cap;
+    const confirmBox = el(`
+      <div class="confirm">
+        <b>${onWaitlist ? "Auf der Warteliste" : "Angemeldet"}</b>
+        ${state.justSignedUp.kind} ist für ${formatDateLong(state.trainingDate)} ${onWaitlist ? "auf der Warteliste (Platz " + (spot - cap + 1) + ")" : "fest angemeldet"}.
+        Zum Abmelden bitte kurz beim Trainer melden.
+      </div>
+    `);
+    signupCard.appendChild(confirmBox);
+    const another = el(`<button class="ghost" type="button">Noch ein Kind anmelden</button>`);
+    another.addEventListener('click', () => { state.justSignedUp = null; render(); });
+    signupCard.appendChild(another);
+  }
+
+  container.appendChild(signupCard);
+
+  // Lineup card (visual)
+  const lineupCard = el(`<div class="card"></div>`);
+  const lineupTitle = el(`<p class="section-title">Startelf${waitlist.length ? ' & Warteliste' : ''}</p>`);
+  lineupCard.appendChild(lineupTitle);
+  const lineup = el(`<div class="lineup"></div>`);
+  confirmed.forEach((e,i) => lineup.appendChild(el(`<div class="jersey" title="${e.kind}">${i+1}</div>`)));
+  waitlist.forEach((e,i) => lineup.appendChild(el(`<div class="jersey bench" title="${e.kind}">${cap+i+1}</div>`)));
+  if(state.entries.length === 0){
+    lineup.appendChild(el(`<p class="roster-empty">Noch keine Anmeldungen für diesen Termin.</p>`));
+  }
+  lineupCard.appendChild(lineup);
+  container.appendChild(lineupCard);
+
+  // Trainer section
+  if(!state.trainerMode){
+    const toggle = el(`<div class="trainer-toggle"><button type="button">Trainer-Ansicht</button></div>`);
+    toggle.querySelector('button').addEventListener('click', () => { state.pinShown = true; render(); });
+    if(state.pinShown){
+      const pinCard = el(`
+        <div class="card">
+          <p class="section-title">Trainer-Ansicht</p>
+          <div class="pin-row">
+            <input id="pin-input" type="password" inputmode="numeric" placeholder="PIN eingeben">
+            <button class="primary" type="button" style="margin-top:0;">OK</button>
+          </div>
+          <div class="error-msg" style="${state.pinError ? '' : 'display:none;'}">${state.pinError}</div>
+        </div>
+      `);
+      const pinInput = pinCard.querySelector('#pin-input');
+      const pinBtn = pinCard.querySelector('button.primary');
+      const tryPin = () => {
+        if(pinInput.value === state.config.pin){
+          state.trainerMode = true; state.pinError = ""; state.pinShown = false;
+        } else {
+          state.pinError = "Falsche PIN.";
+        }
+        render();
+      };
+      pinBtn.addEventListener('click', tryPin);
+      pinInput.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); tryPin(); } });
+      container.appendChild(pinCard);
+    } else {
+      container.appendChild(toggle);
+    }
+  } else {
+    const trainerCard = el(`<div class="card"><p class="section-title">Trainer-Ansicht <span class="badge">verwalten</span></p></div>`);
+
+    // roster with delete
+    const rosterList = el(`<div></div>`);
+    if(state.entries.length === 0){
+      rosterList.appendChild(el(`<p class="roster-empty">Keine Anmeldungen.</p>`));
+    } else {
+      state.entries.forEach((e, i) => {
+        const row = el(`
+          <div class="roster-row">
+            <div class="jersey ${i>=cap?'bench':''}" style="width:34px;height:34px;font-size:13px;">${i+1}</div>
+            <div style="flex:1;">
+              <div class="roster-name">${e.kind}</div>
+              <div class="roster-sub">${e.eltern} · ${e.kontakt}${i>=cap?' · Warteliste':''}</div>
+            </div>
+            <button class="del-btn" type="button">Entfernen</button>
+          </div>
+        `);
+        row.querySelector('.del-btn').addEventListener('click', () => handleDelete(e.id));
+        rosterList.appendChild(row);
+      });
+    }
+    trainerCard.appendChild(rosterList);
+
+    const cancelBtn = el(`<button class="ghost" type="button">${state.cancelled ? "Training wieder aktivieren" : "Training diese Woche absagen"}</button>`);
+    cancelBtn.addEventListener('click', handleToggleCancelled);
+    trainerCard.appendChild(cancelBtn);
+
+    // config editor
+    const configForm = el(`
+      <form id="config-form" style="margin-top:22px; border-top:1px solid var(--line); padding-top:16px;">
+        <p class="section-title">Einstellungen</p>
+        <div class="config-grid">
+          <div>
+            <label for="c-weekday">Wochentag</label>
+            <select id="c-weekday">
+              ${WEEKDAYS.map((w,i) => `<option value="${i}" ${i===state.config.weekday?'selected':''}>${w}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label for="c-time">Uhrzeit</label>
+            <input id="c-time" type="time" value="${state.config.time}">
+          </div>
+        </div>
+        <div class="config-grid">
+          <div>
+            <label for="c-cap">Plätze</label>
+            <input id="c-cap" type="number" min="1" value="${state.config.capacity}">
+          </div>
+          <div>
+            <label for="c-pin">Trainer-PIN</label>
+            <input id="c-pin" type="text" value="${state.config.pin}">
+          </div>
+        </div>
+        <button type="submit" class="primary">Einstellungen speichern</button>
+      </form>
+    `);
+    configForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newConfig = {
+        weekday: parseInt(configForm.querySelector('#c-weekday').value, 10),
+        time: configForm.querySelector('#c-time').value || "16:00",
+        capacity: Math.max(1, parseInt(configForm.querySelector('#c-cap').value, 10) || 1),
+        pin: configForm.querySelector('#c-pin').value.trim() || state.config.pin
+      };
+      handleSaveConfig(newConfig);
+    });
+    trainerCard.appendChild(configForm);
+
+    const exitBtn = el(`<button class="ghost" type="button" style="margin-top:12px;">Trainer-Ansicht verlassen</button>`);
+    exitBtn.addEventListener('click', () => { state.trainerMode = false; render(); });
+    trainerCard.appendChild(exitBtn);
+
+    container.appendChild(trainerCard);
+  }
+
+  container.appendChild(el(`<p class="foot-note">Anmeldungen sind für alle mit diesem Link sichtbar. Änderungen (Löschen, Einstellungen) sind nur über die Trainer-Ansicht möglich.</p>`));
+
+  wrap.appendChild(container);
+  app.appendChild(wrap);
+}
+
+loadAll();
+</script>
+</body>
+</html>
