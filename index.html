@@ -215,7 +215,7 @@ async function storageSet(key, value){
 }
 
 const STORAGE_CONFIG_KEY = "foerdertraining:config";
-const DEFAULT_CONFIG = { weekday: 2, time: "16:00", capacity: 12, pin: "0000" };
+const DEFAULT_CONFIG = { weekday: 2, time: "16:00", capacity: 12, pin: "0000", upcomingDates: [] };
 const WEEKDAYS = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
 
 let state = {
@@ -455,18 +455,23 @@ function render(){
 
   container.appendChild(signupCard);
 
-  // Lineup card (visual)
-  const lineupCard = el(`<div class="card"></div>`);
-  const lineupTitle = el(`<p class="section-title">Startelf${waitlist.length ? ' & Warteliste' : ''}</p>`);
-  lineupCard.appendChild(lineupTitle);
-  const lineup = el(`<div class="lineup"></div>`);
-  confirmed.forEach((e,i) => lineup.appendChild(el(`<div class="jersey" title="${e.kind}">${i+1}</div>`)));
-  waitlist.forEach((e,i) => lineup.appendChild(el(`<div class="jersey bench" title="${e.kind}">${cap+i+1}</div>`)));
-  if(state.entries.length === 0){
-    lineup.appendChild(el(`<p class="roster-empty">Noch keine Anmeldungen für diesen Termin.</p>`));
+  // Anstehende Termine (vom Trainer gepflegt, rein informativ)
+  const upcoming = state.config.upcomingDates || [];
+  if(upcoming.length > 0){
+    const upcomingCard = el(`<div class="card"></div>`);
+    upcomingCard.appendChild(el(`<p class="section-title">Anstehende Termine</p>`));
+    const list = el(`<div></div>`);
+    upcoming.forEach((line) => {
+      if(!line.trim()) return;
+      list.appendChild(el(`
+        <div class="roster-row">
+          <div class="roster-name">${line}</div>
+        </div>
+      `));
+    });
+    upcomingCard.appendChild(list);
+    container.appendChild(upcomingCard);
   }
-  lineupCard.appendChild(lineup);
-  container.appendChild(lineupCard);
 
   // Trainer section
   if(!state.trainerMode){
@@ -554,16 +559,22 @@ function render(){
             <input id="c-pin" type="text" value="${state.config.pin}">
           </div>
         </div>
+        <div>
+          <label for="c-upcoming">Anstehende Termine (eine Zeile pro Termin, für die Eltern sichtbar)</label>
+          <textarea id="c-upcoming" rows="4" style="width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:10px; font:500 14px 'Inter'; background:#fff; color:var(--ink); resize:vertical;" placeholder="z. B.&#10;Dienstag, 2. September&#10;Dienstag, 9. September&#10;Dienstag, 16. September&#10;Dienstag, 23. September">${(state.config.upcomingDates || []).join('\n')}</textarea>
+        </div>
         <button type="submit" class="primary">Einstellungen speichern</button>
       </form>
     `);
     configForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      const upcomingRaw = configForm.querySelector('#c-upcoming').value;
       const newConfig = {
         weekday: parseInt(configForm.querySelector('#c-weekday').value, 10),
         time: configForm.querySelector('#c-time').value || "16:00",
         capacity: Math.max(1, parseInt(configForm.querySelector('#c-cap').value, 10) || 1),
-        pin: configForm.querySelector('#c-pin').value.trim() || state.config.pin
+        pin: configForm.querySelector('#c-pin').value.trim() || state.config.pin,
+        upcomingDates: upcomingRaw.split('\n').map(s => s.trim()).filter(s => s.length > 0)
       };
       handleSaveConfig(newConfig);
     });
